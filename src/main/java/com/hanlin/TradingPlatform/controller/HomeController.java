@@ -10,4 +10,9 @@ public class HomeController {
     public String home() {
         return "Welcome to Trading Platform!";
     }
+
+    @GetMapping("/api")
+    public String secure() {
+        return "Welcome to Trading Platform Secure!";
+    }
 }
