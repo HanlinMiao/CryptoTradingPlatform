@@ -35,6 +35,8 @@ public class JwtProvider {
         //  IssuedAt() current datetime
         //  Expiration() 24 hours from the issued time
         //  Claims(): Additional Payload data, such as the user's email and authorities
+        //  In the context of JSON Web Tokens (JWTs), a claim is a piece of information or data encoded within the token's payload.
+        //  Claims are used to communicate information about the token's subject (e.g., a user) and other relevant details between two parties (such as a client and a server).
         //  Sign the token with the secret key
         String jwt = Jwts.builder()
                 .setIssuedAt(new Date())
