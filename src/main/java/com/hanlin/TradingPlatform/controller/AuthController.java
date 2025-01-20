@@ -121,9 +121,10 @@ public class AuthController {
         return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
     }
 
+    @PostMapping("/two-factor/otp/{otp}")
     public ResponseEntity<AuthResponse> verifySigningOTP(
             @PathVariable String otp,
-            @RequestParam String id) {
+            @RequestParam String id) throws BadCredentialsException {
         // the id comes from the TwoFactorOTP class
 
         TwoFactorOTP twoFactorOTP = twoFactorOTPService.findById(id);
