@@ -4,6 +4,7 @@ import com.hanlin.TradingPlatform.model.Order;
 import com.hanlin.TradingPlatform.model.User;
 import com.hanlin.TradingPlatform.model.Wallet;
 import com.hanlin.TradingPlatform.model.WalletTransaction;
+import com.hanlin.TradingPlatform.service.OrderService;
 import com.hanlin.TradingPlatform.service.UserService;
 import com.hanlin.TradingPlatform.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class WalletController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/api/wallet")
     public ResponseEntity<Wallet> getUserWallet(@RequestHeader("Authorization") String jwt) throws Exception {

@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrdersOfUser(Long userId, String orderType, String assetSymbol) {
+    public List<Order> getAllOrdersOfUser(Long userId, OrderType orderType, String assetSymbol) {
         return orderRepository.findByUserId(userId);
     }
 
@@ -110,7 +110,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order processOrder(Coin coin, double quantity, OrderType orderType, User user) {
-        return null;
+    @Transactional
+    public Order processOrder(Coin coin, double quantity, OrderType orderType, User user) throws Exception {
+        if (orderType.equals(OrderType.BUY)) {
+            return buyAsset(coin, quantity, user);
+        } else if (orderType.equals(OrderType.SELL)) {
+            return sellAsset(coin, quantity, user);
+        }
+        throw new Exception("Invalid Order Type.");
     }
 }
