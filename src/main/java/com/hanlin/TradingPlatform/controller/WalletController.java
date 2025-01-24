@@ -1,10 +1,9 @@
 package com.hanlin.TradingPlatform.controller;
 
-import com.hanlin.TradingPlatform.model.Order;
-import com.hanlin.TradingPlatform.model.User;
-import com.hanlin.TradingPlatform.model.Wallet;
-import com.hanlin.TradingPlatform.model.WalletTransaction;
+import com.hanlin.TradingPlatform.model.*;
+import com.hanlin.TradingPlatform.response.PaymentResponse;
 import com.hanlin.TradingPlatform.service.OrderService;
+import com.hanlin.TradingPlatform.service.PaymentOrderService;
 import com.hanlin.TradingPlatform.service.UserService;
 import com.hanlin.TradingPlatform.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,9 @@ public class WalletController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private PaymentOrderService paymentOrderService;
 
     @GetMapping("/api/wallet")
     public ResponseEntity<Wallet> getUserWallet(@RequestHeader("Authorization") String jwt) throws Exception {
@@ -54,6 +56,25 @@ public class WalletController {
        User user = userService.findUserProfileByJwt(jwt);
        Order order = orderService.getOrderById(orderId);
        Wallet wallet = walletService.payOrderPayment(order, user);
+
+       return new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping("/api/wallet/deposit/")
+    public ResponseEntity<Wallet> addMoneyToWallet(
+            @RequestHeader("Authorization") String jwt,
+            @RequestParam(name="order_id") Long orderId,
+            @RequestParam(name="payment_id") String paymentId
+    ) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+        Wallet wallet = walletService.getUserWallet(user);
+        PaymentOrder paymentOrder = paymentOrderService.getPaymentOrderById(orderId);
+
+        Boolean status = paymentOrderService.proceedPaymentOrder(paymentOrder, paymentId);
+
+        if (status) {
+            walletService.addBalance(wallet, paymentOrder.getAmount());
+        }
 
         return new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
     }
