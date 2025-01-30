@@ -25,7 +25,7 @@ public class AssetController {
         return ResponseEntity.ok(asset);
     }
 
-    @GetMapping("/coin/{coinId}user")
+    @GetMapping("/coin/{coinId}/user")
     public ResponseEntity<Asset> getAssetByUserIdAndCoinId(
             @PathVariable String coinId,
             @RequestHeader("Authorization") String jwt

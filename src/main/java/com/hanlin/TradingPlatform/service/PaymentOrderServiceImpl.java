@@ -25,13 +25,13 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
     @Autowired
     private PaymentOrderRepository paymentOrderRepository;
 
-//    @Value("${stripe.api.key}")
+    @Value("${stripe.api.key}")
     private String stripeSecretKey;
 
-//    @Value("${razorpay.api.key}")
+    @Value("${razorpay.api.key}")
     private String apiKey;
 
-//    @Value("${razorpay.api.secret}")
+    @Value("${razorpay.api.secret}")
     private String apiSecretKey;
 
     @Override
@@ -40,6 +40,7 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
         paymentOrder.setUser(user);
         paymentOrder.setAmount(amount);
         paymentOrder.setPaymentMethod(paymentMethod);
+        paymentOrder.setPaymentOrderStatus(PaymentOrderStatus.PENDING);
         return paymentOrderRepository.save(paymentOrder);
     }
 
@@ -52,6 +53,9 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
 
     @Override
     public Boolean proceedPaymentOrder(PaymentOrder paymentOrder, String paymentId) throws RazorpayException {
+        if (paymentOrder.getPaymentOrderStatus() == null) {
+            paymentOrder.setPaymentOrderStatus(PaymentOrderStatus.PENDING);
+        }
         if (paymentOrder.getPaymentOrderStatus().equals(PaymentOrderStatus.PENDING)) {
             if (paymentOrder.getPaymentMethod().equals(PaymentMethod.RAZORPAY)) {
                 RazorpayClient razorpayClient = new RazorpayClient(apiKey, apiSecretKey);
@@ -76,7 +80,7 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
     }
 
     @Override
-    public PaymentResponse createRazorpayPaymentLink(User user, Long amount) {
+    public PaymentResponse createRazorpayPaymentLink(User user, Long amount, Long orderId) {
         Long newAmount = amount * 100;
         try {
             // Instantiate a Razorpay client with your key ID and secret key
@@ -96,7 +100,7 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
             paymentLinkRequest.put("notify",notify);
 
             paymentLinkRequest.put("reminder_enable", true);
-            paymentLinkRequest.put("callback_url", "http://localhost:5173/wallet");
+            paymentLinkRequest.put("callback_url", "http://localhost:5173/wallet?order_id=" + orderId);
             paymentLinkRequest.put("callback_method", "get");
 
             PaymentLink paymentLink = razorpayClient.paymentLink.create(paymentLinkRequest);

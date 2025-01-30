@@ -11,8 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
-@RequestMapping("/api/wallet")
 public class WalletController {
 
     @Autowired
@@ -60,21 +61,22 @@ public class WalletController {
        return new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
     }
 
-    @PutMapping("/api/wallet/deposit/")
+    @PutMapping("/api/wallet/deposit/{amount}")
     public ResponseEntity<Wallet> addMoneyToWallet(
             @RequestHeader("Authorization") String jwt,
-            @RequestParam(name="order_id") Long orderId,
-            @RequestParam(name="payment_id") String paymentId
+            @PathVariable Long amount
+//            @RequestParam(name="order_id") Long orderId,
+//            @RequestParam(name="payment_id") String paymentId
     ) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         Wallet wallet = walletService.getUserWallet(user);
-        PaymentOrder paymentOrder = paymentOrderService.getPaymentOrderById(orderId);
+//        PaymentOrder paymentOrder = paymentOrderService.getPaymentOrderById(orderId);
 
-        Boolean status = paymentOrderService.proceedPaymentOrder(paymentOrder, paymentId);
-
-        if (status) {
-            walletService.addBalance(wallet, paymentOrder.getAmount());
-        }
+//        Boolean status = paymentOrderService.proceedPaymentOrder(paymentOrder, paymentId);
+//        if (status) {
+//            walletService.addBalance(wallet, paymentOrder.getAmount());
+//        }
+        walletService.addBalance(wallet, amount);
 
         return new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
     }

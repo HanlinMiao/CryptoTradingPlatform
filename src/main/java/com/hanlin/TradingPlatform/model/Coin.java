@@ -79,7 +79,7 @@ public class Coin {
     private double atlChangePercentage;
 
     @JsonProperty("atl_date")
-    private double atlDate;
+    private Date atlDate;
 
     @JsonProperty("roi")
     @JsonIgnore

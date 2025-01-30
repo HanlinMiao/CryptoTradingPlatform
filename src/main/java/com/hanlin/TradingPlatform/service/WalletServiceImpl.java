@@ -24,7 +24,7 @@ public class WalletServiceImpl implements WalletService {
             wallet = new Wallet();
             wallet.setUser(user);
         }
-        return wallet;
+        return walletRepository.save(wallet);
     }
 
     @Override

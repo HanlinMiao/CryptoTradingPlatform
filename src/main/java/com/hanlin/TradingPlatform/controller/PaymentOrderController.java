@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
 public class PaymentOrderController {
 
     @Autowired
@@ -33,7 +32,7 @@ public class PaymentOrderController {
         PaymentOrder paymentOrder = paymentOrderService.createOrder(user, amount, paymentMethod);
 
         if (paymentMethod.equals(PaymentMethod.RAZORPAY)) {
-            paymentResponse = paymentOrderService.createRazorpayPaymentLink(user, amount);
+            paymentResponse = paymentOrderService.createRazorpayPaymentLink(user, amount, paymentOrder.getId());
         } else {
             paymentResponse = paymentOrderService.createStripePaymentLink(user, amount, paymentOrder.getId());
         }

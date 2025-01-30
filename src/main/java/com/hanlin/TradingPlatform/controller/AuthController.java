@@ -8,6 +8,7 @@ import com.hanlin.TradingPlatform.response.AuthResponse;
 import com.hanlin.TradingPlatform.service.CustomUserDetailService;
 import com.hanlin.TradingPlatform.service.EmailService;
 import com.hanlin.TradingPlatform.service.TwoFactorOTPService;
+import com.hanlin.TradingPlatform.service.WatchlistService;
 import com.hanlin.TradingPlatform.utils.OTPUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,9 @@ public class AuthController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private WatchlistService watchlistService;
+
     @PostMapping("/sign-up")
     public ResponseEntity<AuthResponse> register(@RequestBody User user) throws Exception {
         // Check if email address already exists
@@ -50,10 +54,10 @@ public class AuthController {
 
         // .save() saves the user object to the database
         User savedUser = userRepository.save(newUser);
+        watchlistService.createWatchlist(savedUser);
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 user.getEmail(),
                 user.getPassword()
-
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
 
