@@ -112,8 +112,8 @@ public class OrderServiceImpl implements OrderService {
                 walletService.payOrderPayment(order, user);
 
                 // updated Asset
-                Asset updatedAsset = assetService.updateAsset(assetToSell.getId(), -quantity);
-                if (updatedAsset.getQuantity() * coin.getCurrentPrice() <= 1) {
+                Asset updatedAsset = assetService.updateAsset(assetToSell.getId(), assetToSell.getQuantity()-quantity);
+                if (updatedAsset.getQuantity() <= 0) {
                     assetService.deleteAsset(updatedAsset.getId());
                 }
                 return savedOrder;
